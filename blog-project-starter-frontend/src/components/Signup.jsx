@@ -16,7 +16,7 @@ function Signup() {
         navigate("/home");
       }
     });
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
