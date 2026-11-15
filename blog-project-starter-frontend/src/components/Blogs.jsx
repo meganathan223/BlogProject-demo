@@ -9,7 +9,7 @@ function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [admin, setAdmin] = useState(false);
 
-  const RENDER_URI = https://blogproject-demo.onrender.com;
+  const RENDER_URI = "https://blogproject-demo.onrender.com";
 
   useEffect(() => {
     window.scrollTo(0, 0);
