@@ -191,18 +191,22 @@ function Blogs() {
             </span>
             <span className="ml-2">{blog.likes} likes</span>
 
-            <button
-              onClick={() => handleEdit(blog)}
-              className="px-4 py-1 rounded text-white bg-green-700 mx-4"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(blog._id)}
-              className="px-4 py-1 rounded text-white bg-red-700 mx-4"
-            >
-              Delete
-            </button>
+            {admin && (
+              <>
+                <button
+                  onClick={() => handleEdit(blog)}
+                  className="px-4 py-1 rounded text-white bg-green-700 mx-4"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(blog._id)}
+                  className="px-4 py-1 rounded text-white bg-red-700 mx-4"
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         ))}
       </div>
