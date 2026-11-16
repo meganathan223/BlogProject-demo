@@ -7,11 +7,13 @@ import auth from "../config/firebase";
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [admin, setAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const RENDER_URI = "https://blogproject-demo.onrender.com";
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIsLoading(true);
 
     auth.onAuthStateChanged(function (user) {
       if (user) {
@@ -21,7 +23,7 @@ function Blogs() {
           setAdmin(false);
         }
       } else {
-        console.log("User Logged outf ");
+        console.log("User Logged out");
       }
     });
 
@@ -29,6 +31,7 @@ function Blogs() {
       .get(`${RENDER_URI}/api/blogs`)
       .then((res) => {
         console.log(res.data);
+        setIsLoading(false);
         setBlogs(res.data);
       })
       .catch(() => {
@@ -138,6 +141,9 @@ function Blogs() {
         ""
       )}
 
+      {isLoading && (
+        <p className="text-center text-2xl block">Loading Blogs...</p>
+      )}
       <div className="blogs-container grid grid-cols-1 md:grid-cols-2 gap-6 container mx-auto px-4 mb-4">
         {blogs.map((blog) => (
           <div
