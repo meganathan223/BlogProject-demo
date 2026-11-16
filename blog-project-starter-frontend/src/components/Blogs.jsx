@@ -10,8 +10,7 @@ function Blogs() {
   const [isLoading, setIsLoading] = useState(false);
   const [editId, setEditId] = useState(null); // Stores _id when editing
 
-  const RENDER_URI =
-    "http://localhost:5000" || "https://blogproject-demo.onrender.com";
+  const RENDER_URI = "https://blogproject-demo.onrender.com";
 
   useEffect(() => {
     window.scrollTo(0, 0);
