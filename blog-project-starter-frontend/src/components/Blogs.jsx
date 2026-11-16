@@ -8,8 +8,10 @@ function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [admin, setAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [editId, setEditId] = useState(null); // Stores _id when editing
 
-  const RENDER_URI = "https://blogproject-demo.onrender.com";
+  const RENDER_URI =
+    "http://localhost:5000" || "https://blogproject-demo.onrender.com";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,7 +54,6 @@ function Blogs() {
         axios
           .get(`${RENDER_URI}/api/blogs`)
           .then((res) => {
-            console.log(res.data);
             setBlogs(res.data);
           })
           .catch(() => {
@@ -64,7 +65,7 @@ function Blogs() {
     }
   };
 
-  const handleNewBlogSubmit = (event) => {
+  const handleNewBlogSubmit = async (event) => {
     event.preventDefault(); // Prevent form from refreshing the page
     const today = new Date();
     const date = today.toLocaleDateString("en-US", {
@@ -74,29 +75,55 @@ function Blogs() {
     });
 
     const likes = 0;
-    axios
-      .post(`${RENDER_URI}/api/blogs`, {
-        newTitle,
-        date,
-        newContent,
-        likes,
-      })
-      .then((res) => {
-        console.log(res.data);
 
-        axios
-          .get(`${RENDER_URI}/api/blogs`)
-          .then((res) => {
-            console.log(res.data);
-            setBlogs(res.data);
-          })
-          .catch(() => {
-            console.log("Error fetching data");
+    try {
+      if (editId) {
+        if (editId) {
+          // UPDATE existing blog
+          const res = await axios.put(`${RENDER_URI}/api/blogs/${editId}`, {
+            newTitle,
+            newContent,
           });
-      });
+          setBlogs(
+            blogs.map((blog) => (blog._id === editId ? res.data : blog)),
+          );
+          setEditId(null); // Exit edit mode
+        }
+      } else {
+        // CREATE new blog
+        const res = await axios.post(`${RENDER_URI}/api/blogs`, {
+          newTitle,
+          date,
+          newContent,
+          likes,
+        });
 
-    setNewTitle("");
-    setNewContent("");
+        setBlogs([res.data, ...blogs]);
+      }
+
+      setNewTitle("");
+      setNewContent("");
+    } catch (err) {
+      console.error("Error saving blog:", err);
+    }
+  };
+
+  // LOAD DATA FOR EDIT: Populate inputs when Edit button is clicked
+  const handleEdit = (blog) => {
+    setEditId(blog._id);
+    setNewTitle(blog.newTitle);
+    setNewContent(blog.newContent);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scrolls up to your form
+  };
+
+  // Remove blog from MongoDB & UI
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${RENDER_URI}/api/blogs/${id}`);
+      setBlogs(blogs.filter((blog) => blog._id !== id));
+    } catch (err) {
+      console.error("Error deleting blog:", err);
+    }
   };
 
   return (
@@ -133,7 +160,7 @@ function Blogs() {
               type="submit"
               className="bg-orange-400 text-white p-2 rounded hover:bg-orange-600"
             >
-              Add Blog
+              {!editId ? "Add Blog" : "Edit Blog"}
             </button>
           </form>
         </div>
@@ -144,11 +171,12 @@ function Blogs() {
       {isLoading && (
         <p className="text-center text-2xl block">Loading Blogs...</p>
       )}
+
       <div className="blogs-container grid grid-cols-1 md:grid-cols-2 gap-6 container mx-auto px-4 mb-4">
         {blogs.map((blog) => (
           <div
             key={blog._id}
-            className="blog-post mb-8 p-6 bg-white shadow-lg rounded-lg"
+            className="blog-post m-8 border p-4 bg-white shadow-lg rounded-lg"
           >
             <h3 className="blog-title font-semibold text-2xl text-gray-800 mb-3">
               {blog.newTitle}
@@ -156,12 +184,25 @@ function Blogs() {
             <p className="blog-date text-gray-400 text-sm mb-4">{blog.date}</p>
             <p className="blog-content text-gray-600 mb-4">{blog.newContent}</p>
             <span
-              className="text-blue-500 cursor-pointer"
+              className="text-blue-500 cursor-pointer "
               onClick={() => handleLike(blog._id)}
             >
               Like
             </span>
-            <span className="ml-2">{blog.likes} Likes</span>
+            <span className="ml-2">{blog.likes} likes</span>
+
+            <button
+              onClick={() => handleEdit(blog)}
+              className="px-4 py-1 rounded text-white bg-green-700 mx-4"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(blog._id)}
+              className="px-4 py-1 rounded text-white bg-red-700 mx-4"
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

@@ -39,8 +39,11 @@ app.get("/api/blogs", async (req, res) => {
   }
 });
 
+// update likes
 app.patch("/api/blogs/like/:id", async (req, res) => {
   try {
+    console.log("like", req);
+
     const blog = await Blog.findById(req.params.id);
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
@@ -59,6 +62,7 @@ app.patch("/api/blogs/like/:id", async (req, res) => {
   }
 });
 
+// Create blogs
 app.post("/api/blogs", async (req, res) => {
   const blog = new Blog({
     newTitle: req.body.newTitle,
@@ -72,6 +76,34 @@ app.post("/api/blogs", async (req, res) => {
     res.status(201).json(newBlog);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// UPDATE (EDIT) blog by ID
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    console.log("update", req);
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        newTitle: req.body.newTitle,
+        newContent: req.body.newContent,
+      },
+      { new: true }, // Returns the updated document to React
+    );
+    res.json(updatedBlog);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE blog by ID
+app.delete("/api/blogs/:id", async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+    res.json({ message: "Blog deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

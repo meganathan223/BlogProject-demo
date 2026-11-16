@@ -36,6 +36,12 @@ function Login() {
       });
   };
 
+  const handleFill = (e) => {
+    e.preventDefault();
+    setEmail("demo.admin@gmail.com");
+    setPassword("1231122");
+  };
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
@@ -76,6 +82,12 @@ function Login() {
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200 ease-in-out"
         >
           Login
+        </button>
+        <button
+          className="bg-green-700 mx-3 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200 ease-in-out"
+          onClick={handleFill}
+        >
+          Quick Fill Admin
         </button>
       </form>
     </div>

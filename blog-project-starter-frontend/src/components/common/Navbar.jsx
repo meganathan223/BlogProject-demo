@@ -25,6 +25,7 @@ function Navbar() {
 
   function logout() {
     signOut(auth);
+    navigate("/login");
   }
 
   return (
