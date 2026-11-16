@@ -33,16 +33,12 @@ function Signup() {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        console.log(res);
+        console.log("Registered successfully");
+        navigate("/login");
       })
       .catch(() => {
         console.log("failed to add user");
       });
-
-    // Simulate user registration process
-    console.log("User registered:", { email, password });
-    // After registration, redirect to the login page
-    navigate("/login"); // Replace '/login' with your login page route
   };
 
   return (

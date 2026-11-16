@@ -32,7 +32,7 @@ function Login() {
         navigate("/home");
       })
       .catch(() => {
-        setErr("Error signing in, Please try again1");
+        setErr("Error signing in, Please try again");
       });
   };
 
