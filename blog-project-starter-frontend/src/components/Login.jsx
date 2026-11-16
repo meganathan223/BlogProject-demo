@@ -12,11 +12,15 @@ function Login() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    auth.onAuthStateChanged(function (user) {
+    // Save the listener to an 'unsubscribe' variable
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigate("/home");
       }
     });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleLogin = (e) => {
